@@ -9,18 +9,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 
-import javax.swing.ButtonGroup;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 import Model.Comment;
-import Model.Questions;
 
-public class QuestionView extends JFrame {
+public class AspectOpinionView extends JFrame {
 
 	/**
 	 * 
@@ -31,7 +30,7 @@ public class QuestionView extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public QuestionView(Comment comment, int questionIndex) {
+	public AspectOpinionView(Comment comment) {
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setTitle("Question");
 		//setDefaultCloseOperation(JFrame.);
@@ -49,24 +48,24 @@ public class QuestionView extends JFrame {
 		JPanel panel = new JPanel(new BorderLayout(0,0));
 		contentPane.add(panel);
 		
-		JTextArea textArea = new JTextArea(Questions.QUESTIONS[questionIndex]);
+		JTextArea textArea = new JTextArea("Entrez l'aspect et l'opinion");
 		textArea.setBackground(new Color(240, 240, 240));
 		panel.add(textArea, BorderLayout.NORTH);
-		ButtonGroup group = new ButtonGroup();
-		for (int j = 0; j < Questions.ANSWERS[questionIndex].length; j++) {
-			JRadioButton radioButton = new JRadioButton(Questions.ANSWERS[questionIndex][j]);
-			radioButton.addActionListener(new ActionListener() {
-
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					comment.setAnswer(Questions.QUESTIONS[questionIndex], radioButton.getText());
-				}
-			});
-			group.add(radioButton);
-			panel.add(radioButton, (j == 0) ? BorderLayout.WEST : (j == 1) ? BorderLayout.CENTER : BorderLayout.EAST);
-			radioButton.setSelected(true);
-			comment.setAnswer(Questions.QUESTIONS[questionIndex], radioButton.getText());
-		}
+		JTextArea aspect = new JTextArea();
+		aspect.setToolTipText("Aspect");
+		JTextArea opinion = new JTextArea();
+		opinion.setToolTipText("Opinion");
+		JPanel panel2 = new JPanel(new GridLayout(1, 2, 0, 0));
+		panel2.add(aspect,  BorderLayout.WEST);
+		panel2.add(opinion,  BorderLayout.EAST);
+		
+		Border border = BorderFactory.createLineBorder(Color.BLACK);
+		aspect.setBorder(BorderFactory.createCompoundBorder(border, 
+		            BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+		opinion.setBorder(BorderFactory.createCompoundBorder(border, 
+	            BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+		
+		panel.add(panel2, BorderLayout.CENTER);
 		
 		JButton button = new JButton("Next question");
 		button.addActionListener(new ActionListener() {
@@ -74,7 +73,8 @@ public class QuestionView extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				synchronized (comment) {
-					QuestionView.this.setVisible(false);
+					AspectOpinionView.this.setVisible(false);
+					comment.setOpinion(aspect.getText(), opinion.getText());
 					comment.notify();
 				}
 			}

@@ -21,7 +21,17 @@ public class Comment {
 	public int statusParsed;
 	public String owner;
 	
+	//Controversy
+	public String label;
+	public String label_pro;
+	public String label_con;
+	
+	//Article title
+	public String title;
+	
 	public HashMap<String, String> questionAnswer = new HashMap<String, String>();
+	public String aspect;
+	public String opinion;
 
 	public Comment() {}
 
@@ -67,5 +77,10 @@ public class Comment {
 				}
 			}
 		}
+	}
+
+	public void setOpinion(String aspect, String opinion) {
+		this.aspect = aspect;
+		this.opinion = opinion;
 	}
 }

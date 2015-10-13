@@ -13,6 +13,7 @@ import Common.Constants;
 import Model.Comment;
 import Model.Comments;
 import Model.Questions;
+import View.AspectOpinionView;
 import View.CommentView;
 import View.QuestionView;
 
@@ -77,6 +78,19 @@ public class MainApplication {
 
 					questionView.close();
 					i++;
+				}
+				
+				if (!loading) {
+					AspectOpinionView aspect = new AspectOpinionView(comment);
+					synchronized (comment) {
+						try {
+							comment.wait();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					aspect.close();
 				}
 
 				if (!loading) {
