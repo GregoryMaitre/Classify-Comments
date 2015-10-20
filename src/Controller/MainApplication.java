@@ -10,16 +10,10 @@ import java.util.Scanner;
 import javax.swing.JOptionPane;
 
 import Common.Constants;
-import Model.Comment;
 import Model.Comments;
-import Model.Questions;
-import View.AspectOpinionView;
 import View.CommentView;
-import View.QuestionView;
 
 public class MainApplication {
-	private static boolean loading = false;
-
 	public static void main(String[] args) throws IOException {
 
 		File targetFile = new File(Constants.TARGET_FILE);
@@ -57,56 +51,11 @@ public class MainApplication {
 			//// Creation of model
 			JSONManager jsonManager = new JSONManager();
 			Comments comments = jsonManager.toComments(jsons.toString());
+			new CommentView(comments);
 
-			do {
-				loading = false;
-				Comment comment = comments.getNextComment();
-				CommentView commentView = new CommentView(comments, comment);
-//				int i = 0;
-
-				// while ((i < Questions.QUESTIONS.length) && !loading) {
-				QuestionView questionView = new QuestionView(comment);
-				//
-				synchronized (comment) {
-					try {
-						comment.wait();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				//
-				questionView.close();
-				// i++;
-				// }
-
-				// if (!loading) {
-				// AspectOpinionView aspect = new AspectOpinionView(comment);
-				// synchronized (comment) {
-				// try {
-				// comment.wait();
-				// } catch (InterruptedException e) {
-				// // TODO Auto-generated catch block
-				// e.printStackTrace();
-				// }
-				// }
-				// aspect.close();
-				// }
-
-				if (!loading) {
-					comment.save();
-				}
-
-				commentView.close();
-
-			} while (comments.hasNext());
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "Fatal error! Don't do that again!", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
-	}
-
-	public static void setLoad() {
-		loading = true;
 	}
 }

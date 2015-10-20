@@ -3,22 +3,22 @@ package View;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
-import Controller.MainApplication;
 import Controller.MetaData;
 import Model.Comment;
 import Model.Comments;
@@ -29,15 +29,24 @@ public class CommentView extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private Comments comments;
+	private Comment currentComment = null;
+
+	private JPanel questionPanel = null;
 	private JPanel contentPane;
+	private JLabel commentLabel;
+	private JTextArea commentContent;
 
 	/**
 	 * Create the frame.
 	 */
-	public CommentView(Comments comments, Comment comment) {
-		setTitle("Comment");
-		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+	public CommentView(Comments comments) {
 
+		this.comments = comments;
+
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+		setTitle("Comment");
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		int x = dim.width / 2;
 		int y = dim.height / 2;
@@ -64,45 +73,84 @@ public class CommentView extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
 				comments.setCommentNumber(MetaData.load());
-				MainApplication.setLoad();
-				synchronized (comment) {
-					comment.notify();
-				}
+				CommentView.this.nextComment();
 			}
 		});
 		mnFile.add(mntmLoad);
 		mnFile.add(mntmSaveAndClose);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane = new JPanel(new GridLayout(1, 2));
 		setContentPane(contentPane);
-		contentPane.setLayout(new BorderLayout(0, 0));
 
-		String label = "<html>Article : " + comment.title + "<br/>Comment : " + comment.id + "<br/>Controversy : "
-				+ comment.label + "<br/>Pro : " + comment.label_pro + "<br/>Con : " + comment.label_con + "</html>";
-		JLabel lblNewLabel = new JLabel(label);
-		// JLabel lblNewLabel = new JLabel(
-		// "Article : " + comment.title + "\nComment : " + comment.id +
-		// "\nControversy : " + comment.label +
-		// "\nPro : " + comment.label_pro + "\nCon : " + comment.label_con);
-		contentPane.add(lblNewLabel, BorderLayout.NORTH);
+		JPanel commentPanel = new JPanel();
+		commentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.add(commentPanel);
+
+		commentPanel.setLayout(new BorderLayout(0, 0));
+
+		commentLabel = new JLabel();
+		commentPanel.add(commentLabel, BorderLayout.NORTH);
 
 		JScrollPane scrollPane = new JScrollPane();
-		contentPane.add(scrollPane, BorderLayout.CENTER);
+		commentPanel.add(scrollPane, BorderLayout.CENTER);
 
-		JTextArea textArea = new JTextArea(comment.message);
-		textArea.setFont(new Font("Times New Roman", Font.PLAIN, 20));
-		textArea.setLineWrap(true);
-		textArea.setEditable(false);
-		scrollPane.setViewportView(textArea);
+		commentContent = new JTextArea();
+		commentContent.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+		commentContent.setLineWrap(true);
+		commentContent.setEditable(false);
+		scrollPane.setViewportView(commentContent);
 
+		addWindowListener(new java.awt.event.WindowAdapter() {
+			@Override
+			public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+				if (JOptionPane.showConfirmDialog(CommentView.this, "Do you want to save your progression?", "Closing",
+						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+					MetaData.save(comments.getIndex());
+					System.exit(0);
+				}
+			}
+		});
+
+		nextComment();
+		// setUndecorated(true);
+		setExtendedState(JFrame.MAXIMIZED_BOTH);
+		// setResizable(false);
 		setVisible(true);
 	}
 
-	public void close() {
-		setVisible(false);
-		dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+	private String getLabel(Comment comment) {
+		return "<html>Article : " + comment.title + "<br/>Comment : " + comment.id + "<br/>Controversy : "
+				+ comment.label + "<br/>Pro : " + comment.label_pro + "<br/>Con : " + comment.label_con + "</html>";
 	}
 
+	private void setComment(Comment comment) {
+		commentLabel.setText(getLabel(comment));
+		commentContent.setText(comment.message);
+
+		if (questionPanel != null) {
+			contentPane.remove(questionPanel);
+		}
+
+		questionPanel = new JPanel(new GridLayout(2, 1));
+		questionPanel.add(new QuestionView(comment, this));
+		contentPane.add(questionPanel);
+		contentPane.repaint();
+	}
+
+	public void nextComment() {
+		currentComment = comments.getNextComment();
+		if (currentComment != null) {
+			setComment(currentComment);
+		} else {
+			if (questionPanel != null) {
+				contentPane.remove(questionPanel);
+			}
+			contentPane.repaint();
+			JOptionPane.showMessageDialog(null, "No comments left", "Information", JOptionPane.INFORMATION_MESSAGE);
+		}
+	}
+
+	public void saveComment() {
+		currentComment.save();
+	}
 }
