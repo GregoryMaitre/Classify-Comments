@@ -62,36 +62,36 @@ public class MainApplication {
 				loading = false;
 				Comment comment = comments.getNextComment();
 				CommentView commentView = new CommentView(comments, comment);
-				int i = 0;
+//				int i = 0;
 
-				while ((i < Questions.QUESTIONS.length) && !loading) {
-					QuestionView questionView = new QuestionView(comment, i);
-
-					synchronized (comment) {
-						try {
-							comment.wait();
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+				// while ((i < Questions.QUESTIONS.length) && !loading) {
+				QuestionView questionView = new QuestionView(comment);
+				//
+				synchronized (comment) {
+					try {
+						comment.wait();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
+				}
+				//
+				questionView.close();
+				// i++;
+				// }
 
-					questionView.close();
-					i++;
-				}
-				
-				if (!loading) {
-					AspectOpinionView aspect = new AspectOpinionView(comment);
-					synchronized (comment) {
-						try {
-							comment.wait();
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-					aspect.close();
-				}
+				// if (!loading) {
+				// AspectOpinionView aspect = new AspectOpinionView(comment);
+				// synchronized (comment) {
+				// try {
+				// comment.wait();
+				// } catch (InterruptedException e) {
+				// // TODO Auto-generated catch block
+				// e.printStackTrace();
+				// }
+				// }
+				// aspect.close();
+				// }
 
 				if (!loading) {
 					comment.save();
@@ -101,7 +101,8 @@ public class MainApplication {
 
 			} while (comments.hasNext());
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(null, "Fatal error! Don't do that again!", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Fatal error! Don't do that again!", "Error",
+					JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
