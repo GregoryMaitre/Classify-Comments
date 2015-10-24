@@ -13,7 +13,7 @@ public class Questions {
 			"Est-ce qu'il y a une ponctuation anormale (!!!, ???, ?!, ...) ?",
 			"Est-ce qu'il y a des guillemets?",
 			"Est-ce qu'il y a des interjections?",
-			"Est-ce qu'il y a des laugher expressions?"};
+			"Est-ce qu'il y a des laughter expressions?"};
 	public static String[][] ANSWERS = { 
 			{ "Commentaire positif", "Commentaire Neutre", "Commentaire negatif" },
 			{ "Commentaire long", "Commentaire court" }, 
@@ -26,5 +26,5 @@ public class Questions {
 			{ "Il y a une ponctuation anormale", "Il n'y a pas de ponctuation anormale"} ,
 			{ "Il y a des guillemets", "Il n'y a pas de guillemets"},
 			{ "Il y a des interjections", "Il n'y a pas d'interjections"},
-			{ "Il y a des laugher expressions", "Il n'y a pas de laugher expressions"}};
+			{ "Il y a des laughter expressions", "Il n'y a pas de laughter expressions"}};
 }
