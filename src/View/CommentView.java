@@ -120,7 +120,8 @@ public class CommentView extends JFrame {
 
 	private String getLabel(Comment comment) {
 		return "<html>Article : " + comment.title + "<br/>Comment : " + comment.id + "<br/>Controversy : "
-				+ comment.label + "<br/>Pro : " + comment.label_pro + "<br/>Con : " + comment.label_con + "</html>";
+				+ comment.label + "<br/>Pro : " + comment.label_pro + "<br/>Con : " + comment.label_con + "<br>Index: "
+				+ comments.getIndex() + "/" + (comments.size() - 1) + "</html>";
 	}
 
 	private void setComment(Comment comment) {
