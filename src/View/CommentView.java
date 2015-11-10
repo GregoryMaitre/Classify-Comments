@@ -22,6 +22,7 @@ import javax.swing.border.EmptyBorder;
 import Controller.MetaData;
 import Model.Comment;
 import Model.Comments;
+import Model.ResultOpinionExtractor;
 
 public class CommentView extends JFrame {
 
@@ -36,13 +37,17 @@ public class CommentView extends JFrame {
 	private JPanel contentPane;
 	private JLabel commentLabel;
 	private JTextArea commentContent;
+	private ResultOpinionExtractor resultOpinionExtractor;
 
 	/**
 	 * Create the frame.
+	 * 
+	 * @param resultOpinionExtractor
 	 */
-	public CommentView(Comments comments) {
+	public CommentView(Comments comments, ResultOpinionExtractor resultOpinionExtractor) {
 
 		this.comments = comments;
+		this.resultOpinionExtractor = resultOpinionExtractor;
 
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -121,7 +126,11 @@ public class CommentView extends JFrame {
 	private String getLabel(Comment comment) {
 		return "<html>Article : " + comment.title + "<br/>Comment : " + comment.id + "<br/>Controversy : "
 				+ comment.label + "<br/>Pro : " + comment.label_pro + "<br/>Con : " + comment.label_con + "<br>Index: "
-				+ comments.getIndex() + "/" + (comments.size() - 1) + "</html>";
+				+ comments.getIndex() + "/" + (comments.size() - 1)
+				+ ((resultOpinionExtractor.get(comment.id) != null)
+						? "<br>Opinions detecte: " + resultOpinionExtractor.get(comment.id).getOpinionValue().toString()
+						: "")
+				+ "</html>";
 	}
 
 	private void setComment(Comment comment) {

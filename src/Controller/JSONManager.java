@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 
 import Model.Comment;
 import Model.Comments;
+import Model.Opinion;
 
 public class JSONManager {
 	
@@ -23,5 +24,9 @@ public class JSONManager {
 	
 	public Comments toComments(String json) {
 		return new Comments(gson.fromJson(json, Comment[].class));
+	}
+	
+	public Opinion[] toOpinions(String json) {
+		return gson.fromJson(json, Opinion[].class);
 	}
 }
