@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 
 import Common.Constants;
 import Model.Comments;
+import Model.ResultOpinionDetailExtractor;
 import Model.ResultOpinionExtractor;
 import View.CommentView;
 
@@ -54,7 +55,9 @@ public class MainApplication {
 			Comments comments = jsonManager.toComments(jsons.toString());
 			ResultOpinionExtractor resultOpinionExtractor = new ResultOpinionExtractor(new File(Constants.OPINION_FILE));
 			resultOpinionExtractor.load();
-			new CommentView(comments, resultOpinionExtractor);
+			ResultOpinionDetailExtractor resultOpinionDetailExtractor = new ResultOpinionDetailExtractor(new File(Constants.OPINION_DETAIL_FILE));
+			resultOpinionDetailExtractor.load();
+			new CommentView(comments, resultOpinionExtractor, resultOpinionDetailExtractor);
 
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "Fatal error! Don't do that again!", "Error",
