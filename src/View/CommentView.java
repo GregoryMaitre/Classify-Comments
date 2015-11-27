@@ -30,6 +30,7 @@ import Model.Opinion;
 import Model.OpinionDetails;
 import Model.ResultOpinionDetailExtractor;
 import Model.ResultOpinionExtractor;
+import Model.ResultsClassifyComments;
 
 public class CommentView extends JFrame {
 
@@ -46,19 +47,22 @@ public class CommentView extends JFrame {
 	private JTextArea commentContent;
 	private ResultOpinionExtractor resultOpinionExtractor;
 	private ResultOpinionDetailExtractor resultOpinionDetailExtractor;
+	private ResultsClassifyComments classify;
 
 	/**
 	 * Create the frame.
 	 * 
 	 * @param resultOpinionExtractor
 	 * @param resultOpinionDetailExtractor
+	 * @param classify
 	 */
 	public CommentView(Comments comments, ResultOpinionExtractor resultOpinionExtractor,
-			ResultOpinionDetailExtractor resultOpinionDetailExtractor) {
+			ResultOpinionDetailExtractor resultOpinionDetailExtractor, ResultsClassifyComments classify) {
 
 		this.comments = comments;
 		this.resultOpinionExtractor = resultOpinionExtractor;
 		this.resultOpinionDetailExtractor = resultOpinionDetailExtractor;
+		this.classify = classify;
 
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -162,7 +166,8 @@ public class CommentView extends JFrame {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout());
 		panel.add(new JLabel(((resultOpinionExtractor.get(comment.id) != null)
-				? "Opinions detecte: " + resultOpinionExtractor.get(comment.id).getOpinionValue().toString() : "")), BorderLayout.NORTH);
+				? "Opinions detecte: " + resultOpinionExtractor.get(comment.id).getOpinionValue().toString() : "")),
+				BorderLayout.NORTH);
 
 		Opinion opinion = resultOpinionExtractor.get(comment.id);
 
@@ -190,7 +195,7 @@ public class CommentView extends JFrame {
 		Vector<String> header = OpinionDetails.getHeaders();
 
 		tableModel.setDataVector(dataList, header);
-		
+
 		panel.add(scrollPane);
 
 		questionPanel.add(panel, BorderLayout.CENTER);
@@ -199,7 +204,11 @@ public class CommentView extends JFrame {
 	public void nextComment() {
 		currentComment = comments.getNextComment();
 		if (currentComment != null) {
-			setComment(currentComment);
+			if (classify.get(currentComment.id) != null) {
+				nextComment();
+			} else {
+				setComment(currentComment);
+			}
 		} else {
 			if (questionPanel != null) {
 				contentPane.remove(questionPanel);

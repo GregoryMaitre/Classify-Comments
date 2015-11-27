@@ -13,6 +13,7 @@ import Common.Constants;
 import Model.Comments;
 import Model.ResultOpinionDetailExtractor;
 import Model.ResultOpinionExtractor;
+import Model.ResultsClassifyComments;
 import View.CommentView;
 
 public class MainApplication {
@@ -57,7 +58,9 @@ public class MainApplication {
 			resultOpinionExtractor.load();
 			ResultOpinionDetailExtractor resultOpinionDetailExtractor = new ResultOpinionDetailExtractor(new File(Constants.OPINION_DETAIL_FILE));
 			resultOpinionDetailExtractor.load();
-			new CommentView(comments, resultOpinionExtractor, resultOpinionDetailExtractor);
+			ResultsClassifyComments classify = new ResultsClassifyComments(Constants.COMMENTS_PATH);
+			classify.load();
+			new CommentView(comments, resultOpinionExtractor, resultOpinionDetailExtractor, classify);
 
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "Fatal error! Don't do that again!", "Error",
